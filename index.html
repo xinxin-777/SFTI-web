@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SFTI 无烟原生人格测试</title>
+  <style>
+    :root {
+      --bg: #fff7fb;
+      --bg2: #eefaff;
+      --card: rgba(255, 255, 255, 0.76);
+      --card2: rgba(255, 255, 255, 0.9);
+      --line: rgba(93, 118, 181, 0.18);
+      --text: #17213a;
+      --muted: #647391;
+      --cyan: #00b8ff;
+      --mint: #20d9a4;
+      --pink: #ff4f9a;
+      --yellow: #ffd166;
+      --purple: #8b5cf6;
+      --orange: #ff8a3d;
+      --danger: #ff4d6d;
+      --shadow: 0 24px 70px rgba(63, 84, 140, 0.16);
+      font-family: "Times New Roman", "SimSun", "Songti SC", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 14% 10%, rgba(0, 184, 255, 0.24), transparent 27rem),
+        radial-gradient(circle at 86% 8%, rgba(255, 79, 154, 0.18), transparent 25rem),
+        radial-gradient(circle at 50% 88%, rgba(255, 209, 102, 0.22), transparent 34rem),
+        linear-gradient(135deg, #fff7fb 0%, #eefaff 45%, #fff7df 100%);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 84, 140, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 84, 140, 0.055) 1px, transparent 1px);
+      background-size: 46px 46px;
+      mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.45), transparent 78%);
+      z-index: -2;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .blob {
+      position: fixed;
+      width: 24rem;
+      height: 24rem;
+      border-radius: 999px;
+      filter: blur(20px);
+      opacity: 0.18;
+      pointer-events: none;
+      z-index: -1;
+      animation: float 8s ease-in-out infinite;
+    }
+
+    .blob.one {
+      left: -7rem;
+      top: 18rem;
+      background: var(--cyan);
+    }
+
+    .blob.two {
+      right: -9rem;
+      bottom: 8rem;
+      background: var(--pink);
+      animation-delay: -2.2s;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+      50% { transform: translate3d(18px, -20px, 0) scale(1.05); }
+    }
+
+    .hero {
+      position: relative;
+      padding: 42px 0 50px;
+    }
+
+    .hero.hidden {
+      display: none;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 42px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 900;
+      letter-spacing: 0.06em;
+    }
+
+    .brand-badge {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 15px;
+      color: #06111f;
+      background: linear-gradient(135deg, var(--cyan), var(--mint));
+      box-shadow: 0 0 28px rgba(20, 217, 255, 0.35);
+    }
+
+    .nav-pill {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .nav-pill span {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(300px, 0.65fr);
+      gap: 24px;
+      align-items: center;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 13px;
+      color: #081020;
+      font-weight: 900;
+      font-size: 13px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, var(--yellow), var(--mint));
+      box-shadow: 0 14px 36px rgba(33, 245, 170, 0.18);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(40px, 6.2vw, 76px);
+      line-height: 1.02;
+      letter-spacing: 0.02em;
+    }
+
+    .gradient-text {
+      display: inline-block;
+      white-space: nowrap;
+      background: linear-gradient(100deg, #1d2b64, #00b8ff 38%, #ff4f9a 74%, #ff9f1c);
+      background-clip: text;
+      -webkit-background-clip: text;
+      color: transparent;
+    }
+
+    .lead {
+      max-width: 680px;
+      margin: 24px 0 0;
+      color: #52627f;
+      font-size: clamp(16px, 1.8vw, 19px);
+      line-height: 1.8;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 34px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 18px;
+      padding: 14px 20px;
+      color: #08101e;
+      font-weight: 900;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      background: linear-gradient(135deg, var(--cyan), var(--mint));
+      box-shadow: 0 16px 40px rgba(20, 217, 255, 0.25);
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 20px 48px rgba(20, 217, 255, 0.36);
+    }
+
+    .btn.secondary {
+      color: var(--text);
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.58);
+      box-shadow: none;
+    }
+
+    .hero-card {
+      position: relative;
+      min-height: 430px;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      padding: 24px;
+      background: linear-gradient(145deg, rgba(255, 255, 255, 0.86), rgba(232, 247, 255, 0.72));
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at 75% 18%, rgba(255, 79, 154, 0.18), transparent 14rem),
+        radial-gradient(circle at 18% 80%, rgba(0, 184, 255, 0.18), transparent 14rem);
+      pointer-events: none;
+    }
+
+    .demo-report {
+      position: relative;
+      display: grid;
+      gap: 16px;
+      z-index: 1;
+    }
+
+    .mini-card {
+      border: 1px solid var(--line);
+      border-radius: 22px;
+      padding: 18px;
+      background: rgba(255, 255, 255, 0.62);
+      backdrop-filter: blur(12px);
+    }
+
+    .mini-label {
+      color: var(--cyan);
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+
+    .mini-title {
+      font-size: 26px;
+      font-weight: 950;
+      line-height: 1.22;
+    }
+
+    .factor-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .factor-pills span {
+      padding: 9px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 900;
+      color: #07111f;
+      background: #fff;
+    }
+
+    .factor-pills span:nth-child(1) { background: var(--cyan); }
+    .factor-pills span:nth-child(2) { background: var(--yellow); }
+    .factor-pills span:nth-child(3) { background: var(--pink); color: #fff; }
+    .factor-pills span:nth-child(4) { background: var(--mint); }
+    .factor-pills span:nth-child(5) { background: #b79cff; }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 12px;
+    }
+
+    .stat {
+      padding: 15px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.62);
+    }
+
+    .stat strong {
+      display: block;
+      margin-top: 5px;
+      font-size: 24px;
+    }
+
+    .section {
+      padding: 30px 0;
+    }
+
+    .quiz-section {
+      display: none;
+    }
+
+    .quiz-section.show {
+      display: block;
+    }
+
+    .quiz-section .section-title {
+      display: none;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 18px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 48px);
+      letter-spacing: 0.02em;
+    }
+
+    .section-title p {
+      max-width: 520px;
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: var(--card);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .quiz-shell {
+      overflow: hidden;
+    }
+
+    .quiz-top {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 18px;
+      align-items: center;
+      padding: 22px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.5);
+    }
+
+    .progress-track {
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(45, 75, 135, 0.1);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--pink), var(--yellow));
+      transition: width 0.25s ease;
+    }
+
+    .progress-meta {
+      color: var(--muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .question-area {
+      padding: 26px;
+    }
+
+    .question-kicker {
+      color: var(--mint);
+      font-size: 13px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .question-text {
+      min-height: 76px;
+      margin: 0 0 22px;
+      font-size: clamp(22px, 3vw, 34px);
+      line-height: 1.35;
+      letter-spacing: 0.02em;
+      font-weight: 950;
+    }
+
+    .options {
+      display: grid;
+      gap: 13px;
+    }
+
+    .option {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      width: 100%;
+      border: 1px solid rgba(156, 183, 238, 0.24);
+      border-radius: 20px;
+      padding: 16px;
+      color: var(--text);
+      text-align: left;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.72);
+      transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
+    }
+
+    .option:hover {
+      transform: translateY(-2px);
+      border-color: rgba(20, 217, 255, 0.6);
+      background: rgba(0, 184, 255, 0.1);
+    }
+
+    .option.selected {
+      border-color: rgba(33, 245, 170, 0.75);
+      background: linear-gradient(135deg, rgba(33, 245, 170, 0.18), rgba(0, 184, 255, 0.1));
+    }
+
+    .option-letter {
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 12px;
+      color: #07111f;
+      font-weight: 950;
+      background: linear-gradient(135deg, var(--yellow), var(--pink));
+    }
+
+    .option-text {
+      line-height: 1.6;
+      font-weight: 720;
+    }
+
+    .quiz-bottom {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 0 26px 26px;
+    }
+
+    .ghost-btn {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 16px;
+      color: var(--text);
+      background: rgba(255, 255, 255, 0.68);
+      cursor: pointer;
+      font-weight: 900;
+    }
+
+    .ghost-btn:disabled {
+      opacity: 0.42;
+      cursor: not-allowed;
+    }
+
+    .result {
+      display: none;
+      padding-bottom: 70px;
+    }
+
+    .result.show {
+      display: block;
+    }
+
+    .result-hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+      gap: 22px;
+      align-items: stretch;
+      margin-top: 16px;
+    }
+
+    .diagnosis-card {
+      padding: 26px;
+      overflow: hidden;
+    }
+
+    .diagnosis-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 20px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border-radius: 999px;
+      padding: 9px 13px;
+      color: #06101e;
+      font-weight: 950;
+      font-size: 13px;
+      background: linear-gradient(135deg, var(--cyan), var(--mint));
+    }
+
+    .battery {
+      width: 114px;
+      height: 54px;
+      border: 2px solid rgba(144, 173, 226, 0.6);
+      border-radius: 12px;
+      padding: 5px;
+      position: relative;
+      background: rgba(255, 255, 255, 0.65);
+    }
+
+    .battery::after {
+      content: "";
+      position: absolute;
+      right: -9px;
+      top: 17px;
+      width: 7px;
+      height: 20px;
+      border-radius: 0 5px 5px 0;
+      background: rgba(144, 173, 226, 0.52);
+    }
+
+    .battery-fill {
+      height: 100%;
+      width: 30%;
+      border-radius: 8px;
+      background: linear-gradient(180deg, var(--mint), #00bd87);
+      transition: width 0.35s ease;
+    }
+
+    .result-name {
+      margin: 0;
+      font-size: clamp(32px, 5vw, 58px);
+      line-height: 1.05;
+      letter-spacing: 0.03em;
+    }
+
+    .result-en {
+      color: var(--yellow);
+      font-weight: 950;
+      letter-spacing: 0.08em;
+      margin-top: 10px;
+      text-transform: uppercase;
+    }
+
+    .result-desc {
+      color: #4d5e7c;
+      line-height: 1.85;
+      font-size: 16px;
+      margin: 18px 0 0;
+    }
+
+    .score-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 10px;
+      margin-top: 22px;
+    }
+
+    .score-chip {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 12px 10px;
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .score-chip small {
+      display: block;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .score-chip strong {
+      font-size: 24px;
+    }
+
+    .portrait-card {
+      display: grid;
+      place-items: center;
+      padding: 16px;
+      overflow: hidden;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.9), rgba(236, 246, 255, 0.96));
+    }
+
+    .portrait-card img {
+      width: min(100%, 390px);
+      max-height: 560px;
+      object-fit: contain;
+      border-radius: 22px;
+      filter: drop-shadow(0 18px 34px rgba(0, 0, 0, 0.22));
+    }
+
+    .analysis-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 22px;
+      margin-top: 22px;
+    }
+
+    .chart-card {
+      padding: 22px;
+    }
+
+    .chart-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+    }
+
+    .chart-title h3 {
+      margin: 0;
+      font-size: 21px;
+      letter-spacing: -0.02em;
+    }
+
+    .chart-title span {
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 280px;
+    }
+
+    .insight {
+      margin-top: 14px;
+      padding: 15px;
+      border-left: 3px solid var(--cyan);
+      border-radius: 14px;
+      color: #425371;
+      line-height: 1.75;
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .loop-card {
+      margin-top: 22px;
+      padding: 24px;
+    }
+
+    .loop-list {
+      display: grid;
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .loop-item {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 14px;
+      align-items: start;
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.68);
+    }
+
+    .loop-num {
+      display: grid;
+      place-items: center;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      color: #07111f;
+      font-weight: 950;
+      background: var(--cyan);
+    }
+
+    .loop-item h4 {
+      margin: 0 0 8px;
+      font-size: 17px;
+    }
+
+    .loop-item p {
+      margin: 0;
+      color: #5b6b88;
+      line-height: 1.75;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 24px;
+      z-index: 10;
+      transform: translateX(-50%) translateY(24px);
+      opacity: 0;
+      pointer-events: none;
+      border: 1px solid rgba(33, 245, 170, 0.45);
+      border-radius: 999px;
+      padding: 12px 16px;
+      color: #07111f;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--mint), var(--cyan));
+      box-shadow: 0 16px 48px rgba(20, 217, 255, 0.25);
+      transition: opacity 0.2s ease, transform 0.2s ease;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    @media (max-width: 920px) {
+      .hero-grid,
+      .result-hero,
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .nav,
+      .section-title {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .hero-card {
+        min-height: auto;
+      }
+
+    }
+
+    @media (max-width: 620px) {
+      .wrap {
+        width: min(100% - 22px, 1160px);
+      }
+
+      .stats-row,
+      .score-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quiz-top,
+      .quiz-bottom {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+      }
+
+      .question-area,
+      .diagnosis-card,
+      .loop-card,
+      .chart-card {
+        padding: 18px;
+      }
+
+      canvas {
+        height: 240px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="blob one"></div>
+  <div class="blob two"></div>
+
+  <header class="hero">
+    <div class="wrap">
+      <nav class="nav">
+        <div class="brand">
+          <span class="brand-badge">S</span>
+          <span>SFTI 无烟转型引导系统</span>
+        </div>
+        <div class="nav-pill">
+          <span>18 道场景题</span>
+          <span>5 因子雷达</span>
+          <span>16 种原生人格</span>
+        </div>
+      </nav>
+
+      <div class="hero-grid">
+        <div>
+          <div class="eyebrow">🧠 不是意志力太差，而是触发机制太准</div>
+          <h1><span class="gradient-text">SFTI 烟瘾原生人格</span><br />趣味测试报告</h1>
+          <p class="lead">
+            通过 18 道无压力场景选择题，系统会拆解你的尼古丁依赖基准线、情绪防御机制、社交契约和习惯动作，生成一份类似 MBTI 的烟瘾人格画像。
+          </p>
+          <div class="hero-actions">
+            <button class="btn" id="startBtn">开启 SFTI 原生人格诊断</button>
+            <button class="btn secondary" id="sampleBtn">直接查看示例报告</button>
+          </div>
+        </div>
+
+        <aside class="hero-card">
+          <div class="demo-report">
+            <div class="mini-card">
+              <div class="mini-label">实时诊断预览</div>
+              <div class="mini-title">从“想抽烟”定位到“为什么想抽”</div>
+              <div class="factor-pills">
+                <span>S 提神续命</span>
+                <span>R 享乐奖赏</span>
+                <span>C 人情应酬</span>
+                <span>A 习惯动作</span>
+                <span>E 情绪避难</span>
+              </div>
+            </div>
+            <div class="stats-row">
+              <div class="stat">题量<strong>18</strong></div>
+              <div class="stat">人格<strong>16</strong></div>
+              <div class="stat">耗时<strong>3min</strong></div>
+            </div>
+            <div class="mini-card">
+              <div class="mini-label">结果页包含</div>
+              <div class="mini-title">人格卡片、电量等级、雷达图、24h 冲动曲线、闭环阻断方案</div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="section quiz-section" id="quiz">
+      <div class="wrap">
+        <div class="section-title">
+          <h2>开始测试</h2>
+          <p>选择最接近真实反应的选项即可。前 6 题用于估计尼古丁依赖强度，后 12 题用于计算 S/R/C/A/E 五个烟瘾心理因子。</p>
+        </div>
+
+        <div class="panel quiz-shell">
+          <div class="quiz-top">
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-meta" id="progressMeta">第 1 / 18 题</div>
+          </div>
+          <div class="question-area">
+            <div class="question-kicker" id="questionKicker">第一阶段：尼古丁依赖基准线</div>
+            <h3 class="question-text" id="questionText"></h3>
+            <div class="options" id="options"></div>
+          </div>
+          <div class="quiz-bottom">
+            <button class="ghost-btn" id="prevBtn">上一题</button>
+            <button class="ghost-btn" id="resetBtn">重新开始</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section result" id="result">
+      <div class="wrap">
+        <div class="section-title">
+          <h2>你的无烟人格小报告</h2>
+        </div>
+
+        <div class="result-hero">
+          <article class="panel diagnosis-card">
+            <div class="diagnosis-head">
+              <span class="tag" id="resultTag">诊断定型</span>
+              <div>
+                <div style="color: var(--muted); font-size: 12px; margin-bottom: 7px;">尼古丁躯体依赖电量</div>
+                <div class="battery"><div class="battery-fill" id="batteryFill"></div></div>
+              </div>
+            </div>
+            <h2 class="result-name" id="personaName"></h2>
+            <div class="result-en" id="personaEn"></div>
+            <p class="result-desc" id="personaDesc"></p>
+            <div class="score-grid" id="scoreGrid"></div>
+          </article>
+
+          <aside class="panel portrait-card">
+            <img id="personaImage" src="" alt="人格形象图" />
+          </aside>
+        </div>
+
+        <div class="analysis-grid">
+          <article class="panel chart-card">
+            <div class="chart-title">
+              <h3>🎯 维度二：原生心瘾四驱力模型</h3>
+              <span>S/R/C/A/E 归一化得分</span>
+            </div>
+            <canvas id="radarCanvas" width="720" height="420"></canvas>
+            <div class="insight" id="radarInsight"></div>
+          </article>
+
+          <article class="panel chart-card">
+            <div class="chart-title">
+              <h3>🌊 维度三：24h 神经冲动天气预报</h3>
+              <span>根据最高因子加权曲线</span>
+            </div>
+            <canvas id="lineCanvas" width="720" height="420"></canvas>
+            <div class="insight" id="timelineInsight"></div>
+          </article>
+        </div>
+
+        <article class="panel loop-card">
+          <div class="chart-title">
+            <h3>健康方案</h3>
+            <span>替代动作 + 场景改造</span>
+          </div>
+          <div class="loop-list" id="loopList"></div>
+        </article>
+
+      </div>
+    </section>
+  </main>
+
+  <div class="toast" id="toast">请选择一个选项继续</div>
+
+  <script>
+    const factors = {
+      S: { name: "神经调节", label: "S 提神续命", color: "#14d9ff", max: 10 },
+      R: { name: "正向奖赏", label: "R 享乐奖赏", color: "#ffd166", max: 11 },
+      C: { name: "社交契约", label: "C 人情应酬", color: "#ff4f9a", max: 12 },
+      A: { name: "自动反射", label: "A 习惯动作", color: "#21f5aa", max: 20 },
+      E: { name: "负向应激", label: "E 情绪避难", color: "#8b5cf6", max: 14 }
+    };
+
+    const questions = [
+      {
+        stage: "第一阶段：尼古丁依赖基准线",
+        text: "您每天抽多少支烟？",
+        options: [
+          { text: "10 支或以下", ftnd: 0 },
+          { text: "11 - 20 支", ftnd: 1 },
+          { text: "21 - 30 支", ftnd: 2 },
+          { text: "31 支或以上", ftnd: 3 }
+        ]
+      },
+      {
+        stage: "第一阶段：尼古丁依赖基准线",
+        text: "每天清晨起床后，您通常在多长时间内点燃第一根烟？",
+        options: [
+          { text: "5 分钟以内", ftnd: 3 },
+          { text: "6 - 30 分钟", ftnd: 2 },
+          { text: "31 - 60 分钟", ftnd: 1 },
+          { text: "60 分钟之后", ftnd: 0 }
+        ]
+      },
+      {
+        stage: "第一阶段：尼古丁依赖基准线",
+        text: "在禁烟场所不能抽烟，是否让您感到难以忍受？",
+        options: [
+          { text: "是的，非常难受，坐立难安", ftnd: 1 },
+          { text: "不是，可以克制", ftnd: 0 }
+        ]
+      },
+      {
+        stage: "第一阶段：尼古丁依赖基准线",
+        text: "每天的哪一根烟，是您觉得最放弃不了的？",
+        options: [
+          { text: "早上起床后的第一根烟", ftnd: 1 },
+          { text: "其他时间的任何一根烟", ftnd: 0 }
+        ]
+      },
+      {
+        stage: "第一阶段：尼古丁依赖基准线",
+        text: "您在起床后的前几个小时里抽烟频率是否更高？",
+        options: [
+          { text: "是的", ftnd: 1 },
+          { text: "不是", ftnd: 0 }
+        ]
+      },
+      {
+        stage: "第一阶段：尼古丁依赖基准线",
+        text: "当您生病卧床、身体极度不适时，您还会抽烟吗？",
+        options: [
+          { text: "会，硬着头皮也想抽", ftnd: 1 },
+          { text: "不会，生病了就不想抽了", ftnd: 0 }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "写方案、做研究遇到瓶颈，大脑卡壳的时候：",
+        options: [
+          { text: "必须点一根提神，强行让大脑转起来", weights: { S: 3 } },
+          { text: "单纯想离开工位，走动走动放松下", weights: { E: 2, A: 1 } },
+          { text: "去吸烟区看看有没有熟人，扯两句顺便抽", weights: { C: 3 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "跟伴侣或家人发生激烈争吵、情绪极度焦虑时：",
+        options: [
+          { text: "立刻躲到阳台或楼道点燃，试图平复愤怒", weights: { E: 3 } },
+          { text: "机械性地点着，自己都不知道自己在抽，纯属下意识", weights: { A: 3 } },
+          { text: "这时候反而不想抽，需要一个人静静", weights: {} }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "刚到公司或实验室，开启一天高强度工作前：",
+        options: [
+          { text: "必须在楼下抽完一根再上去，像是个开机仪式", weights: { S: 3 } },
+          { text: "因为习惯了在这个时间点抽，不抽总觉得缺了点什么", weights: { A: 3 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "当完成了某项重大任务，心情愉悦时：",
+        options: [
+          { text: "开心地奖励自己一根，甚至想吐个漂亮的烟圈", weights: { R: 3 } },
+          { text: "拿烟去发给身边的团队伙伴，大家一起庆祝", weights: { C: 3 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "被领导当众批评、感到委屈或挫败时：",
+        options: [
+          { text: "用烟草的辛辣来麻痹这种不适感，寻找心理安慰", weights: { R: 2 } },
+          { text: "躲进无人的安全通道，把香烟当成自己的防空洞", weights: { E: 3 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "饭后，尤其是吃得很饱、很满足的时候：",
+        options: [
+          { text: "饭后一支烟，像是一种绝对的享受", weights: { R: 3 } },
+          { text: "完全是身体的条件反射，筷子一放手就自动摸烟", weights: { A: 3 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "大型社交聚会或应酬上，陌生人突然递过来一支烟：",
+        options: [
+          { text: "出于礼貌和人情世故，哪怕不太想抽也会接过来", weights: { C: 3 } },
+          { text: "婉拒对方，但会掏出自己的烟和对方交换，以此破冰", weights: { C: 2, A: 1 } },
+          { text: "坚决不接，自己玩自己的", weights: {} }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "打游戏 Loading、等车，或者单纯无所事事闲呆着的时候：",
+        options: [
+          { text: "手闲不下来，必须夹着根烟或摆弄打火机才踏实", weights: { A: 3 } },
+          { text: "用抽烟来打发无聊的时间，排解空虚", weights: { A: 1, E: 2 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "看到影视剧里的帅气主角点烟，或者身边的人纷纷点火时：",
+        options: [
+          { text: "自己也会莫名其妙喉咙发痒，忍不住想跟着来一根", weights: { A: 3 } },
+          { text: "觉得这种氛围感很好，抽烟能让自己融入某种格调", weights: { R: 3 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "深夜熬夜、赶进度，身体极度疲惫但又不能睡的时候：",
+        options: [
+          { text: "疯狂连续抽，全靠尼古丁刺激中枢神经硬撑续命", weights: { S: 3 } },
+          { text: "只是借着抽烟的空档，强迫自己闭眼歇 5 分钟", weights: { E: 3 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "为了打入某个核心圈子，比如和导师、客户搞好关系：",
+        options: [
+          { text: "把抽烟当成职场通行证，主动去吸烟区凑热闹、听八卦", weights: { C: 3 } },
+          { text: "认为抽烟并不能帮自己社交，更倾向于单独抽", weights: { S: 1, E: 1 } }
+        ]
+      },
+      {
+        stage: "第二阶段：烟瘾因子与心理诱因",
+        text: "尝试戒烟期间，突然遇到一件非常棘手、让人抓狂的烂事：",
+        options: [
+          { text: "心理防线瞬间崩溃，抓起烟来猛吸，试图逃避现实", weights: { E: 3 } },
+          { text: "理智告诉自己不能抽，但身体和手已经本能地把烟点着", weights: { A: 3 } }
+        ]
+      }
+    ];
+
+    const personaMap = {
+      HIGH: {
+        S: { cn: "蒸汽朋克续命者", en: "THE STEAMPUNK", img: "禁烟2/image.png", desc: "你把香烟当成大脑的外接燃料。越是高压、熬夜、赶进度，越容易把尼古丁误认为专注力开关。" },
+        E: { cn: "孤岛防空洞守卫", en: "THE BUNKER GUARD", img: "禁烟2/image (1).png", desc: "你不是单纯爱烟味，而是在压力袭来时需要一个能立刻躲进去的心理掩体。" },
+        R: { cn: "极度深寒饕客", en: "THE DOPAMINE GLUTTON", img: "禁烟2/image (2).png", desc: "你容易把香烟和奖励、胜利、满足感绑定。它像一层多巴胺调味料，把快乐瞬间放大。" },
+        A: { cn: "末日重型机甲", en: "THE HEAVY AUTOMATON", img: "禁烟2/4055256060badce979f67d250f3fa15.png", desc: "你的吸烟动作已经高度自动化，手比意识更快。很多时候不是你决定抽，而是身体流程自己启动。" },
+        C: { cn: "深渊利维坦", en: "THE LEVIATHAN", img: "禁烟2/image (13).png", desc: "社交契约和躯体依赖叠在一起，让你在应酬场里很难拒绝递来的烟，也很难退出烟雾中的权力游戏。" }
+      },
+      MID: {
+        S: { cn: "半夜修仙Bug猎手", en: "THE CODE HERMIT", img: "禁烟2/image (3).png", desc: "你常在夜深、卡壳、任务逼近时点烟，把它当作强行重启大脑的快捷键。" },
+        R: { cn: "雾境美学视觉艺术家", en: "THE SMOKE VISUALIST", img: "禁烟2/image (4).png", desc: "你对抽烟的姿态、烟雾和氛围有审美投射，香烟常常被包装成某种情绪滤镜。" },
+        A: { cn: "机械迷城提线木偶", en: "THE CLICK PUPPET", img: "禁烟2/image (5).png", desc: "你的触发器藏在日常动作里：坐下、饭后、等待、开电脑，都会拉动那根看不见的提线。" },
+        E: { cn: "都市临时避难常客", en: "THE TRANSIENT", img: "禁烟2/image (6).png", desc: "你会在城市缝隙里临时避难，用一支烟给焦虑和疲惫按下短暂停止键。" },
+        C: { cn: "职场边缘破冰刺客", en: "THE ICEBREAKER", img: "禁烟2/image (7).png", desc: "你擅长把烟当社交接口。递烟、借火、一起去吸烟区，都是你进入关系的破冰动作。" }
+      },
+      LOW: {
+        C: { cn: "名利场夜行傀儡", en: "THE SOCIAL MASK", img: "禁烟2/image (8).png", desc: "你的烟瘾更多被场合唤醒。灯光、酒杯、面子和社交剧本，会让你戴上烟雾面具。" },
+        R: { cn: "周末限定狂欢雅痞", en: "THE WEEKEND REBEL", img: "禁烟2/image (10).png", desc: "你平时未必高频吸烟，但在聚会、喝酒、胜利或放纵时，香烟会变成狂欢配饰。" },
+        A: { cn: "无意识盲从复制者", en: "THE COPYCAT", img: "禁烟2/image (9).png", desc: "你最容易被环境和他人动作带走。别人点火、手边有烟、无聊等待时，身体会自动复制。" },
+        E: { cn: "伪装坚强边缘人", en: "THE PSEUDO LOVER", img: "禁烟2/image (11).png", desc: "你看起来能扛，实际常把烟当作情绪止痛片。它替你吞下了很多说不出口的压力。" },
+        S: { cn: "摸鱼大师", en: "THE LOAFING MASTER", img: "禁烟2/image (12).png", desc: "你的吸烟更像一种轻量摸鱼和状态切换：放空、暂停、离开工位，让自己喘一口气。" }
+      },
+      ZERO: {
+        X: { cn: "纯真无邪白纸潜伏者", en: "THE GHOST SMOKER", img: "禁烟2/image (14).png", desc: "你当前没有明显单一烟瘾因子爆发，更像一张暂时干净的白纸。真正要防的是未来场景诱发。" }
+      }
+    };
+
+    const factorCopy = {
+      S: {
+        title: "神经调节驱动",
+        main: "您的心瘾风暴点主要由“提神续命需求”点燃。",
+        behavior: "一旦进入高压脑力劳动或深夜续航，大脑会把香烟误识别为启动燃料。",
+        solution: ["把提神按钮换成身体启动器", "在 10:00 或 22:30 前准备冷水洗脸、薄荷糖、3 分钟快走，先用生理唤醒替代尼古丁唤醒。"],
+        solution2: ["建立“卡壳离席”协议", "写方案卡住时不去吸烟区，改为离开座位 90 秒，只带水杯不带烟具，让大脑获得暂停但不进入点烟流程。"]
+      },
+      R: {
+        title: "正向奖赏驱动",
+        main: "您的心瘾风暴点主要由“快乐放大器”触发。",
+        behavior: "完成任务、饭后满足或聚会兴奋时，香烟会被大脑包装成奖励的一部分。",
+        solution: ["把奖励从“点烟”改成“点亮”", "完成任务后立刻做一个可见奖励：打卡贴纸、饮品、游戏一局或 5 分钟音乐，不让香烟独占庆祝仪式。"],
+        solution2: ["饭后 7 分钟换轨", "饭后立刻离开餐桌，刷牙或嚼无糖口香糖，让口腔和手部动作被新流程占据。"]
+      },
+      C: {
+        title: "社交契约驱动",
+        main: "您的心瘾风暴点主要由“人情应酬与破冰需求”推高。",
+        behavior: "别人递烟、酒局开场或关系尴尬时，拒绝香烟会被误判成拒绝关系。",
+        solution: ["准备一句不尴尬的拒烟台词", "例如“最近在做一个无烟挑战，烟我不接，茶我陪你喝”，把拒绝烟和保留社交同时说出口。"],
+        solution2: ["把破冰道具换成非烟物", "随身带薄荷糖、茶包或小零食，递出去的不是烟，而是同样能开启对话的低风险物件。"]
+      },
+      A: {
+        title: "自动反射驱动",
+        main: "您的心瘾风暴点主要由“生活触发事件”决定。",
+        behavior: "双手和嘴巴一旦闲下来，就会产生无意识摸烟、点烟、夹烟的动作链。",
+        solution: ["阻断手部自动程序", "把烟和打火机移出视线，给桌面放握力球、笔或指尖陀螺，让手有新对象可抓。"],
+        solution2: ["改写饭后/等待脚本", "饭后立刻收拾餐具、下楼走 300 步；等车时双手拿水杯或手机打字，不给肌肉记忆留空档。"]
+      },
+      E: {
+        title: "负向应激驱动",
+        main: "您的心瘾风暴点主要由“情绪避难需求”拉响警报。",
+        behavior: "焦虑、愤怒、委屈或独处时，大脑会强迫你寻找烟雾来获得安全感。",
+        solution: ["先救情绪，再谈戒烟", "冲动出现时先做 4-7-8 呼吸三轮，给情绪降温，不在峰值时和烟瘾硬碰硬。"],
+        solution2: ["建立安全替代角落", "把阳台/楼道从吸烟点改造成呼吸点，放水、耳机和便签，把“躲起来抽”替换成“躲起来恢复”。"]
+      }
+    };
+
+    const timeLabels = {
+      "08:00": "刚起步期",
+      "10:00": "开机高压期",
+      "12:30": "饱腹多巴胺叠加期",
+      "14:00": "午休重启期",
+      "15:30": "意志力低谷期",
+      "18:30": "劳作结束解禁期",
+      "19:30": "酒局社交峰值期",
+      "22:30": "深夜独处漂移期",
+      "24:00": "夜生活/入睡边界期"
+    };
+
+    const answers = new Array(questions.length).fill(null);
+    let current = 0;
+
+    const $ = (id) => document.getElementById(id);
+    const optionLetters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    function renderQuestion() {
+      const q = questions[current];
+      $("questionKicker").textContent = q.stage;
+      $("questionText").textContent = q.text;
+      $("progressMeta").textContent = `第 ${current + 1} / ${questions.length} 题`;
+      $("progressFill").style.width = `${(current / questions.length) * 100}%`;
+      $("prevBtn").disabled = current === 0;
+
+      $("options").innerHTML = q.options.map((op, i) => `
+        <button class="option ${answers[current] === i ? "selected" : ""}" data-index="${i}">
+          <span class="option-letter">${optionLetters[i]}</span>
+          <span class="option-text">${op.text}</span>
+        </button>
+      `).join("");
+
+      document.querySelectorAll(".option").forEach(btn => {
+        btn.addEventListener("click", () => {
+          answers[current] = Number(btn.dataset.index);
+          if (current < questions.length - 1) {
+            current += 1;
+            renderQuestion();
+          } else {
+            $("progressFill").style.width = "100%";
+            showResult();
+          }
+        });
+      });
+    }
+
+    function calculate() {
+      let ftnd = 0;
+      const raw = { S: 0, R: 0, C: 0, A: 0, E: 0 };
+      answers.forEach((answerIndex, qIndex) => {
+        const option = questions[qIndex].options[answerIndex];
+        if (!option) return;
+        ftnd += option.ftnd || 0;
+        Object.entries(option.weights || {}).forEach(([key, value]) => {
+          raw[key] += value;
+        });
+      });
+
+      const scores = {};
+      Object.keys(factors).forEach(key => {
+        scores[key] = Math.round(Math.min(100, (raw[key] / factors[key].max) * 100));
+      });
+
+      const entries = Object.entries(scores).sort((a, b) => b[1] - a[1]);
+      const maxFactor = entries[0][1] <= 8 ? "X" : entries[0][0];
+      const level = ftnd >= 7 ? "HIGH" : ftnd >= 4 ? "MID" : "LOW";
+      const persona = maxFactor === "X" ? personaMap.ZERO.X : personaMap[level][maxFactor];
+
+      return { ftnd, level, raw, scores, maxFactor, persona };
+    }
+
+    function getTimeline(scores) {
+      const base = {
+        "08:00": 15,
+        "10:00": 20,
+        "12:30": 25,
+        "14:00": 20,
+        "15:30": 30,
+        "18:30": 25,
+        "19:30": 20,
+        "22:30": 20,
+        "24:00": 15
+      };
+
+      const data = Object.entries(base).map(([time, value]) => ({ time, value, source: "BASE" }));
+      const apply = (time, factor, coefficient) => {
+        const item = data.find(d => d.time === time);
+        const score = scores[factor] || 0;
+        const candidate = base[time] * (1 + score / 100 * coefficient);
+        if (candidate > item.value) {
+          item.value = candidate;
+          item.source = factor;
+        }
+      };
+
+      apply("12:30", "A", 1.5);
+      apply("18:30", "A", 1.8);
+      apply("10:00", "S", 0.8);
+      const afternoonFactor = scores.S >= scores.E ? "S" : "E";
+      apply("15:30", afternoonFactor, 1.2);
+      const nightFactor = scores.E >= scores.S ? "E" : "S";
+      apply("22:30", nightFactor, 1.5);
+      apply("19:30", "C", 2.0);
+      apply("24:00", "C", 1.5);
+      apply("12:30", "R", 1.0);
+      apply("18:30", "R", 1.0);
+
+      return data.map(d => ({ ...d, value: Math.round(Math.min(110, d.value)) }));
+    }
+
+    function drawRadar(canvas, scores) {
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      ctx.clearRect(0, 0, w, h);
+      const cx = w / 2;
+      const cy = h / 2 + 10;
+      const radius = Math.min(w, h) * 0.34;
+      const keys = ["S", "R", "C", "A", "E"];
+      const angle = Math.PI * 2 / keys.length;
+
+      ctx.strokeStyle = "rgba(150, 174, 224, 0.22)";
+      ctx.lineWidth = 1;
+      for (let ring = 1; ring <= 5; ring++) {
+        ctx.beginPath();
+        keys.forEach((_, i) => {
+          const r = radius * ring / 5;
+          const x = cx + Math.cos(-Math.PI / 2 + angle * i) * r;
+          const y = cy + Math.sin(-Math.PI / 2 + angle * i) * r;
+          i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+        });
+        ctx.closePath();
+        ctx.stroke();
+      }
+
+      keys.forEach((key, i) => {
+        const x = cx + Math.cos(-Math.PI / 2 + angle * i) * radius;
+        const y = cy + Math.sin(-Math.PI / 2 + angle * i) * radius;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+        const lx = cx + Math.cos(-Math.PI / 2 + angle * i) * (radius + 38);
+        const ly = cy + Math.sin(-Math.PI / 2 + angle * i) * (radius + 38);
+        ctx.fillStyle = "#425371";
+        ctx.font = "700 13px 'Times New Roman', SimSun, serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(factors[key].label, lx, ly);
+      });
+
+      ctx.beginPath();
+      keys.forEach((key, i) => {
+        const r = radius * (scores[key] / 100);
+        const x = cx + Math.cos(-Math.PI / 2 + angle * i) * r;
+        const y = cy + Math.sin(-Math.PI / 2 + angle * i) * r;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, 0, w, h);
+      grad.addColorStop(0, "rgba(20, 217, 255, 0.5)");
+      grad.addColorStop(0.55, "rgba(33, 245, 170, 0.28)");
+      grad.addColorStop(1, "rgba(255, 79, 154, 0.45)");
+      ctx.fillStyle = grad;
+      ctx.fill();
+      ctx.strokeStyle = "#14d9ff";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      keys.forEach((key, i) => {
+        const r = radius * (scores[key] / 100);
+        const x = cx + Math.cos(-Math.PI / 2 + angle * i) * r;
+        const y = cy + Math.sin(-Math.PI / 2 + angle * i) * r;
+        ctx.beginPath();
+        ctx.arc(x, y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = factors[key].color;
+        ctx.fill();
+      });
+    }
+
+    function drawLine(canvas, timeline) {
+      const ctx = canvas.getContext("2d");
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+
+      const w = rect.width;
+      const h = rect.height;
+      const pad = { l: 42, r: 18, t: 24, b: 44 };
+      const max = 110;
+      ctx.clearRect(0, 0, w, h);
+
+      ctx.strokeStyle = "rgba(150, 174, 224, 0.18)";
+      ctx.fillStyle = "rgba(205, 217, 245, 0.65)";
+      ctx.font = "12px 'Times New Roman', SimSun, serif";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "middle";
+      for (let yv = 0; yv <= max; yv += 20) {
+        const y = h - pad.b - (h - pad.t - pad.b) * (yv / max);
+        ctx.beginPath();
+        ctx.moveTo(pad.l, y);
+        ctx.lineTo(w - pad.r, y);
+        ctx.stroke();
+        ctx.fillText(yv, pad.l - 8, y);
+      }
+
+      const xFor = i => pad.l + (w - pad.l - pad.r) * (i / (timeline.length - 1));
+      const yFor = v => h - pad.b - (h - pad.t - pad.b) * (v / max);
+
+      const area = ctx.createLinearGradient(0, pad.t, 0, h - pad.b);
+      area.addColorStop(0, "rgba(255, 79, 154, 0.42)");
+      area.addColorStop(0.45, "rgba(255, 209, 102, 0.22)");
+      area.addColorStop(1, "rgba(20, 217, 255, 0.04)");
+
+      ctx.beginPath();
+      timeline.forEach((item, i) => {
+        const x = xFor(i);
+        const y = yFor(item.value);
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.lineTo(xFor(timeline.length - 1), h - pad.b);
+      ctx.lineTo(xFor(0), h - pad.b);
+      ctx.closePath();
+      ctx.fillStyle = area;
+      ctx.fill();
+
+      ctx.beginPath();
+      timeline.forEach((item, i) => {
+        const x = xFor(i);
+        const y = yFor(item.value);
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.strokeStyle = "#14d9ff";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+
+      const top = [...timeline].sort((a, b) => b.value - a.value)[0];
+      timeline.forEach((item, i) => {
+        const x = xFor(i);
+        const y = yFor(item.value);
+        ctx.beginPath();
+        ctx.arc(x, y, item.time === top.time ? 6 : 4, 0, Math.PI * 2);
+        ctx.fillStyle = item.time === top.time ? "#ff4f9a" : "#14d9ff";
+        ctx.fill();
+        ctx.fillStyle = "rgba(205, 217, 245, 0.7)";
+        ctx.font = "11px 'Times New Roman', SimSun, serif";
+        ctx.textAlign = "center";
+        ctx.fillText(item.time, x, h - 18);
+      });
+
+      ctx.fillStyle = "#ff4f9a";
+      ctx.roundRect(xFor(timeline.indexOf(top)) - 44, yFor(top.value) - 35, 88, 24, 8);
+      ctx.fill();
+      ctx.fillStyle = "#fff";
+      ctx.font = "800 11px 'Times New Roman', SimSun, serif";
+      ctx.textAlign = "center";
+      ctx.fillText("警灯升空", xFor(timeline.indexOf(top)), yFor(top.value) - 23);
+    }
+
+    function levelText(level) {
+      if (level === "HIGH") return "重度依赖";
+      if (level === "MID") return "中度依赖";
+      return "轻度依赖";
+    }
+
+    function showResult() {
+      const report = calculate();
+      const { ftnd, level, scores, maxFactor, persona } = report;
+      const timeline = getTimeline(scores);
+      const topTimes = [...timeline].sort((a, b) => b.value - a.value).slice(0, 2);
+      const dominant = maxFactor === "X" ? "A" : maxFactor;
+      const copy = factorCopy[dominant];
+
+      document.querySelector(".hero").classList.add("hidden");
+      $("quiz").classList.remove("show");
+      $("result").classList.add("show");
+      $("resultTag").textContent = `诊断定型：${levelText(level)} · ${maxFactor === "X" ? "潜伏型" : factors[maxFactor].label}`;
+      $("personaName").textContent = persona.cn;
+      $("personaEn").textContent = persona.en;
+      $("personaDesc").textContent = persona.desc;
+      $("personaImage").src = persona.img;
+      $("personaImage").alt = persona.cn;
+      $("batteryFill").style.width = `${Math.max(12, ftnd * 10)}%`;
+      $("batteryFill").style.background = ftnd >= 7
+        ? "linear-gradient(180deg, #ff4d6d, #ff8a3d)"
+        : ftnd >= 4
+          ? "linear-gradient(180deg, #ffd166, #ff8a3d)"
+          : "linear-gradient(180deg, #21f5aa, #00bd87)";
+
+      $("scoreGrid").innerHTML = Object.keys(factors).map(key => `
+        <div class="score-chip">
+          <small>${factors[key].label}</small>
+          <strong style="color:${factors[key].color}">${scores[key]}</strong>
+        </div>
+      `).join("");
+
+      $("radarInsight").innerHTML = `<strong>主导判断：</strong>${copy.main}<br>${copy.behavior}`;
+      $("timelineInsight").innerHTML = `<strong>冲动预测：</strong>你的高风险波峰集中在 ${topTimes.map(t => `${t.time}（${timeLabels[t.time]}）`).join(" 与 ")}。这些时段建议提前放置替代动作，避免身体自动进入点烟流程。`;
+      $("loopList").innerHTML = `
+        <div class="loop-item">
+          <div class="loop-num">1</div>
+          <div><h4>${copy.solution[0]}</h4><p>${copy.solution[1]}</p></div>
+        </div>
+        <div class="loop-item">
+          <div class="loop-num">2</div>
+          <div><h4>${copy.solution2[0]}</h4><p>${copy.solution2[1]}</p></div>
+        </div>
+      `;
+
+      drawRadar($("radarCanvas"), scores);
+      drawLine($("lineCanvas"), timeline);
+      setTimeout(() => $("result").scrollIntoView({ behavior: "smooth", block: "start" }), 80);
+    }
+
+    function toast(text) {
+      $("toast").textContent = text;
+      $("toast").classList.add("show");
+      setTimeout(() => $("toast").classList.remove("show"), 1500);
+    }
+
+    $("startBtn").addEventListener("click", () => {
+      document.querySelector(".hero").classList.add("hidden");
+      $("result").classList.remove("show");
+      $("quiz").classList.add("show");
+      $("quiz").scrollIntoView({ behavior: "smooth" });
+    });
+    $("sampleBtn").addEventListener("click", () => {
+      const sample = [2, 1, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 0, 0, 1];
+      sample.forEach((value, i) => answers[i] = value);
+      showResult();
+    });
+    $("prevBtn").addEventListener("click", () => {
+      if (current > 0) {
+        current -= 1;
+        renderQuestion();
+      }
+    });
+    $("resetBtn").addEventListener("click", () => {
+      answers.fill(null);
+      current = 0;
+      $("result").classList.remove("show");
+      renderQuestion();
+      toast("已重置测试");
+    });
+
+    window.addEventListener("resize", () => {
+      if (!$("result").classList.contains("show")) return;
+      const report = calculate();
+      drawRadar($("radarCanvas"), report.scores);
+      drawLine($("lineCanvas"), getTimeline(report.scores));
+    });
+
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        this.beginPath();
+        this.moveTo(x + r, y);
+        this.arcTo(x + w, y, x + w, y + h, r);
+        this.arcTo(x + w, y + h, x, y + h, r);
+        this.arcTo(x, y + h, x, y, r);
+        this.arcTo(x, y, x + w, y, r);
+        this.closePath();
+        return this;
+      };
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>

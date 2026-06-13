@@ -722,6 +722,10 @@
       padding: 12px 16px;
       color: #07111f;
       font-weight: 900;
+      max-width: min(92vw, 560px);
+      white-space: normal;
+      line-height: 1.5;
+      text-align: center;
       background: linear-gradient(135deg, var(--mint), var(--cyan));
       box-shadow: 0 16px 48px rgba(20, 217, 255, 0.25);
       transition: opacity 0.2s ease, transform 0.2s ease;
@@ -976,7 +980,8 @@
         window.toast?.("统计上传成功");
       } catch (error) {
         console.warn("SFTI 统计上报失败：", error);
-        window.toast?.("统计上传失败，请检查 CloudBase 权限");
+        const message = error?.message || error?.errmsg || error?.code || "未知错误";
+        window.toast?.(`统计上传失败：${message}`);
       }
     };
   </script>
@@ -1546,7 +1551,7 @@
     function toast(text) {
       $("toast").textContent = text;
       $("toast").classList.add("show");
-      setTimeout(() => $("toast").classList.remove("show"), 1500);
+      setTimeout(() => $("toast").classList.remove("show"), 6000);
     }
 
     $("startBtn").addEventListener("click", () => {

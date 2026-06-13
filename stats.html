@@ -253,11 +253,11 @@
         <h1>SFTI 实时人格统计</h1>
         <p class="lead">用户完成测试后，这里会自动统计不同人格的数量与比例，适合投屏展示或课程汇报使用。</p>
       </div>
-      <div class="status" id="status">等待连接 Firebase</div>
+      <div class="status" id="status">等待连接 CloudBase</div>
     </section>
 
     <div class="setup" id="setup">
-      Firebase 还没有配置。请先把 Firebase 控制台里的配置粘贴到 <strong>firebase-config.js</strong>，然后重新上传到 GitHub。
+      CloudBase 还没有配置。请检查 <strong>cloudbase-config.js</strong> 里的环境 ID 是否正确。
     </div>
 
     <section class="cards">
@@ -300,11 +300,9 @@
     <section class="panel table" id="table"></section>
   </main>
 
-  <script type="module">
-    import { firebaseConfig, firebaseReady } from "./firebase-config.js";
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
-
+  <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.8.1/cloudbase.full.js"></script>
+  <script src="./cloudbase-config.js"></script>
+  <script>
     const personas = [
       ["蒸汽朋克续命者", "THE STEAMPUNK"],
       ["孤岛防空洞守卫", "THE BUNKER GUARD"],
@@ -327,6 +325,7 @@
     const colors = ["#00b8ff", "#20d9a4", "#ff4f9a", "#ffd166", "#8b5cf6", "#ff8a3d"];
     const $ = (id) => document.getElementById(id);
     let lastRecords = [];
+    let cloudbaseDb = null;
 
     if (!CanvasRenderingContext2D.prototype.roundRect) {
       CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
@@ -339,24 +338,57 @@
       };
     }
 
-    if (!firebaseReady) {
-      $("status").textContent = "未配置 Firebase";
-      $("setup").classList.add("show");
-      render([]);
-    } else {
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-      $("status").textContent = "已连接，等待数据";
+    initStats();
 
-      onSnapshot(query(collection(db, "sfti_results")), (snapshot) => {
-        const docs = snapshot.docs.map(doc => doc.data());
-        $("status").textContent = `已实时同步 ${docs.length} 条结果`;
+    async function initCloudbase() {
+      if (cloudbaseDb) return cloudbaseDb;
+      const config = window.SFTI_CLOUDBASE_CONFIG;
+      if (!window.cloudbase || !config?.envId) {
+        throw new Error("CloudBase SDK 或环境 ID 未加载");
+      }
+
+      const app = cloudbase.init({ env: config.envId });
+      const auth = app.auth({ persistence: "local" });
+      const loginState = await auth.getLoginState();
+      if (!loginState) {
+        await auth.signInAnonymously();
+      }
+
+      cloudbaseDb = app.database();
+      return cloudbaseDb;
+    }
+
+    async function initStats() {
+      if (!window.SFTI_CLOUDBASE_CONFIG?.envId) {
+        $("status").textContent = "未配置 CloudBase";
+        $("setup").classList.add("show");
+        render([]);
+        return;
+      }
+
+      $("status").textContent = "正在连接 CloudBase";
+      await loadStats();
+      setInterval(loadStats, 5000);
+    }
+
+    async function loadStats() {
+      try {
+        const db = await initCloudbase();
+        const result = await db
+          .collection(window.SFTI_CLOUDBASE_CONFIG.collectionName)
+          .limit(1000)
+          .get();
+        const docs = result.data || [];
+        $("status").textContent = `已同步 ${docs.length} 条结果`;
+        $("setup").classList.remove("show");
         render(docs);
-      }, (error) => {
+      } catch (error) {
+        console.warn("CloudBase 统计读取失败：", error);
         $("status").textContent = "连接失败";
         $("setup").classList.add("show");
-        $("setup").innerHTML = `Firebase 连接失败：${error.message}<br>请检查 Firestore 是否已创建，以及安全规则是否允许写入和读取。`;
-      });
+        $("setup").innerHTML = `CloudBase 读取失败：${error.message}<br>请检查集合权限是否允许读取，并确认 Web 安全域名已添加 xinxin-777.github.io。`;
+        render(lastRecords);
+      }
     }
 
     function render(records) {

@@ -931,44 +931,52 @@
 
   <script>
     window.recordSftiResult = async function recordSftiResultFallback() {
-      window.toast?.("统计模块未加载，手机可能无法连接 Firebase");
+      window.toast?.("统计模块未加载，请稍后重试");
     };
   </script>
 
-  <script type="module">
-    import { firebaseConfig, firebaseReady } from "./firebase-config.js";
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
-    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+  <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.8.1/cloudbase.full.js"></script>
+  <script src="./cloudbase-config.js"></script>
+  <script>
+    const cloudbaseConfig = window.SFTI_CLOUDBASE_CONFIG;
+    let cloudbaseDb = null;
 
-    let db = null;
+    async function initCloudbase() {
+      if (cloudbaseDb) return cloudbaseDb;
+      if (!window.cloudbase || !cloudbaseConfig?.envId) {
+        throw new Error("CloudBase SDK 或环境 ID 未加载");
+      }
 
-    if (firebaseReady) {
-      const app = initializeApp(firebaseConfig);
-      db = getFirestore(app);
+      const app = cloudbase.init({ env: cloudbaseConfig.envId });
+      const auth = app.auth({ persistence: "local" });
+      const loginState = await auth.getLoginState();
+      if (!loginState) {
+        await auth.signInAnonymously();
+      }
+
+      cloudbaseDb = app.database();
+      return cloudbaseDb;
     }
 
     window.recordSftiResult = async function recordSftiResult(payload) {
-      if (!db) {
-        console.info("Firebase 尚未配置，结果不会上传统计。");
-        window.toast?.("Firebase 未配置，结果未进入统计");
-        return;
-      }
-
-      const visitorId = localStorage.getItem("sfti_visitor_id") || crypto.randomUUID();
-      localStorage.setItem("sfti_visitor_id", visitorId);
-
       try {
-        await addDoc(collection(db, "sfti_results"), {
-          ...payload,
-          visitorId,
-          pageUrl: location.href,
-          createdAt: serverTimestamp()
+        const db = await initCloudbase();
+        await db.collection(cloudbaseConfig.collectionName).add({
+          personaCn: payload.personaCn,
+          personaEn: payload.personaEn,
+          level: payload.level,
+          levelText: payload.levelText,
+          maxFactor: payload.maxFactor,
+          maxFactorLabel: payload.maxFactorLabel,
+          scores: payload.scores,
+          ftnd: payload.ftnd,
+          createdAt: Date.now()
         });
 
         window.toast?.("统计上传成功");
       } catch (error) {
         console.warn("SFTI 统计上报失败：", error);
-        window.toast?.("统计上传失败，请换 Safari/Chrome 或检查网络");
+        window.toast?.("统计上传失败，请检查 CloudBase 权限");
       }
     };
   </script>

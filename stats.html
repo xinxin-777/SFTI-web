@@ -1,0 +1,491 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SFTI 实时人格统计</title>
+  <style>
+    :root {
+      --text: #17213a;
+      --muted: #647391;
+      --line: rgba(93, 118, 181, 0.18);
+      --cyan: #00b8ff;
+      --mint: #20d9a4;
+      --pink: #ff4f9a;
+      --yellow: #ffd166;
+      --purple: #8b5cf6;
+      --shadow: 0 24px 70px rgba(63, 84, 140, 0.16);
+      font-family: "Times New Roman", "SimSun", "Songti SC", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 14% 10%, rgba(0, 184, 255, 0.24), transparent 27rem),
+        radial-gradient(circle at 86% 8%, rgba(255, 79, 154, 0.18), transparent 25rem),
+        radial-gradient(circle at 50% 88%, rgba(255, 209, 102, 0.22), transparent 34rem),
+        linear-gradient(135deg, #fff7fb 0%, #eefaff 45%, #fff7df 100%);
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(rgba(0, 84, 140, 0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 84, 140, 0.055) 1px, transparent 1px);
+      background-size: 46px 46px;
+      z-index: -1;
+    }
+
+    .wrap {
+      width: min(1180px, calc(100% - 32px));
+      margin: 0 auto;
+      padding: 42px 0 58px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 22px;
+      align-items: end;
+      margin-bottom: 26px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 5vw, 66px);
+      line-height: 1.05;
+      letter-spacing: 0.03em;
+    }
+
+    .lead {
+      margin: 14px 0 0;
+      color: var(--muted);
+      font-size: 18px;
+      line-height: 1.7;
+    }
+
+    .status {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 10px 14px;
+      color: #07111f;
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--mint), var(--cyan));
+      box-shadow: var(--shadow);
+      white-space: nowrap;
+    }
+
+    .panel {
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      background: rgba(255, 255, 255, 0.78);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .metric {
+      padding: 20px;
+    }
+
+    .metric span {
+      display: block;
+      color: var(--muted);
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+
+    .metric strong {
+      display: block;
+      font-size: 38px;
+      line-height: 1;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(320px, 0.9fr);
+      gap: 18px;
+    }
+
+    .chart-card {
+      padding: 22px;
+    }
+
+    .chart-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      margin: 0;
+      font-size: 24px;
+      letter-spacing: 0.03em;
+    }
+
+    .chart-head span {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 360px;
+    }
+
+    .table {
+      margin-top: 18px;
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 44px 1fr 82px 82px;
+      gap: 12px;
+      align-items: center;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .row:last-child {
+      border-bottom: 0;
+    }
+
+    .rank {
+      display: grid;
+      place-items: center;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #07111f;
+      font-weight: 900;
+      background: var(--cyan);
+    }
+
+    .name strong {
+      display: block;
+      font-size: 16px;
+    }
+
+    .name small {
+      color: var(--muted);
+    }
+
+    .bar {
+      height: 9px;
+      margin-top: 8px;
+      border-radius: 999px;
+      background: rgba(45, 75, 135, 0.1);
+      overflow: hidden;
+    }
+
+    .bar i {
+      display: block;
+      width: 0;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--cyan), var(--pink), var(--yellow));
+    }
+
+    .setup {
+      display: none;
+      margin-bottom: 18px;
+      padding: 16px 18px;
+      color: #7a4d00;
+      border: 1px solid rgba(255, 161, 39, 0.35);
+      border-radius: 18px;
+      background: rgba(255, 209, 102, 0.22);
+      line-height: 1.7;
+    }
+
+    .setup.show {
+      display: block;
+    }
+
+    @media (max-width: 920px) {
+      .hero,
+      .grid {
+        grid-template-columns: 1fr;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 620px) {
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .row {
+        grid-template-columns: 36px 1fr;
+      }
+
+      .row > strong {
+        text-align: right;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <div>
+        <h1>SFTI 实时人格统计</h1>
+        <p class="lead">用户完成测试后，这里会自动统计不同人格的数量与比例，适合投屏展示或课程汇报使用。</p>
+      </div>
+      <div class="status" id="status">等待连接 Firebase</div>
+    </section>
+
+    <div class="setup" id="setup">
+      Firebase 还没有配置。请先把 Firebase 控制台里的配置粘贴到 <strong>firebase-config.js</strong>，然后重新上传到 GitHub。
+    </div>
+
+    <section class="cards">
+      <article class="panel metric">
+        <span>总测试人数</span>
+        <strong id="totalCount">0</strong>
+      </article>
+      <article class="panel metric">
+        <span>出现人格数</span>
+        <strong id="activeTypes">0</strong>
+      </article>
+      <article class="panel metric">
+        <span>最高占比人格</span>
+        <strong id="topPersona">-</strong>
+      </article>
+      <article class="panel metric">
+        <span>最高占比</span>
+        <strong id="topPercent">0%</strong>
+      </article>
+    </section>
+
+    <section class="grid">
+      <article class="panel chart-card">
+        <div class="chart-head">
+          <h2>人格数量柱状图</h2>
+          <span>实时更新</span>
+        </div>
+        <canvas id="barCanvas"></canvas>
+      </article>
+
+      <article class="panel chart-card">
+        <div class="chart-head">
+          <h2>人格比例环形图</h2>
+          <span>按人数占比</span>
+        </div>
+        <canvas id="donutCanvas"></canvas>
+      </article>
+    </section>
+
+    <section class="panel table" id="table"></section>
+  </main>
+
+  <script type="module">
+    import { firebaseConfig, firebaseReady } from "./firebase-config.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    const personas = [
+      ["蒸汽朋克续命者", "THE STEAMPUNK"],
+      ["孤岛防空洞守卫", "THE BUNKER GUARD"],
+      ["极度深寒饕客", "THE DOPAMINE GLUTTON"],
+      ["末日重型机甲", "THE HEAVY AUTOMATON"],
+      ["深渊利维坦", "THE LEVIATHAN"],
+      ["半夜修仙Bug猎手", "THE CODE HERMIT"],
+      ["雾境美学视觉艺术家", "THE SMOKE VISUALIST"],
+      ["机械迷城提线木偶", "THE CLICK PUPPET"],
+      ["都市临时避难常客", "THE TRANSIENT"],
+      ["职场边缘破冰刺客", "THE ICEBREAKER"],
+      ["名利场夜行傀儡", "THE SOCIAL MASK"],
+      ["周末限定狂欢雅痞", "THE WEEKEND REBEL"],
+      ["无意识盲从复制者", "THE COPYCAT"],
+      ["伪装坚强边缘人", "THE PSEUDO LOVER"],
+      ["摸鱼大师", "THE LOAFING MASTER"],
+      ["纯真无邪白纸潜伏者", "THE GHOST SMOKER"]
+    ];
+
+    const colors = ["#00b8ff", "#20d9a4", "#ff4f9a", "#ffd166", "#8b5cf6", "#ff8a3d"];
+    const $ = (id) => document.getElementById(id);
+    let lastRecords = [];
+
+    if (!CanvasRenderingContext2D.prototype.roundRect) {
+      CanvasRenderingContext2D.prototype.roundRect = function (x, y, w, h, r) {
+        this.moveTo(x + r, y);
+        this.arcTo(x + w, y, x + w, y + h, r);
+        this.arcTo(x + w, y + h, x, y + h, r);
+        this.arcTo(x, y + h, x, y, r);
+        this.arcTo(x, y, x + w, y, r);
+        return this;
+      };
+    }
+
+    if (!firebaseReady) {
+      $("status").textContent = "未配置 Firebase";
+      $("setup").classList.add("show");
+      render([]);
+    } else {
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      $("status").textContent = "已连接，等待数据";
+
+      onSnapshot(query(collection(db, "sfti_results")), (snapshot) => {
+        const docs = snapshot.docs.map(doc => doc.data());
+        $("status").textContent = `已实时同步 ${docs.length} 条结果`;
+        render(docs);
+      }, (error) => {
+        $("status").textContent = "连接失败";
+        $("setup").classList.add("show");
+        $("setup").innerHTML = `Firebase 连接失败：${error.message}<br>请检查 Firestore 是否已创建，以及安全规则是否允许写入和读取。`;
+      });
+    }
+
+    function render(records) {
+      lastRecords = records;
+      const counts = Object.fromEntries(personas.map(([cn]) => [cn, 0]));
+      records.forEach(item => {
+        if (counts[item.personaCn] !== undefined) counts[item.personaCn] += 1;
+      });
+
+      const rows = personas.map(([cn, en]) => ({
+        cn,
+        en,
+        count: counts[cn],
+        percent: records.length ? counts[cn] / records.length * 100 : 0
+      })).sort((a, b) => b.count - a.count || a.cn.localeCompare(b.cn, "zh-CN"));
+
+      const top = rows[0];
+      $("totalCount").textContent = records.length;
+      $("activeTypes").textContent = rows.filter(row => row.count > 0).length;
+      $("topPersona").textContent = top?.count ? top.cn : "-";
+      $("topPercent").textContent = top?.count ? `${top.percent.toFixed(1)}%` : "0%";
+
+      $("table").innerHTML = rows.map((row, index) => `
+        <div class="row">
+          <div class="rank">${index + 1}</div>
+          <div class="name">
+            <strong>${row.cn}</strong>
+            <small>${row.en}</small>
+            <div class="bar"><i style="width:${row.percent}%"></i></div>
+          </div>
+          <strong>${row.count} 人</strong>
+          <strong>${row.percent.toFixed(1)}%</strong>
+        </div>
+      `).join("");
+
+      drawBars($("barCanvas"), rows);
+      drawDonut($("donutCanvas"), rows.filter(row => row.count > 0));
+    }
+
+    function setupCanvas(canvas) {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      const ctx = canvas.getContext("2d");
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, rect.width, rect.height);
+      return { ctx, w: rect.width, h: rect.height };
+    }
+
+    function drawBars(canvas, rows) {
+      const { ctx, w, h } = setupCanvas(canvas);
+      const pad = { l: 40, r: 18, t: 20, b: 92 };
+      const max = Math.max(1, ...rows.map(row => row.count));
+      const barW = (w - pad.l - pad.r) / rows.length * 0.62;
+      const gap = (w - pad.l - pad.r) / rows.length;
+
+      ctx.strokeStyle = "rgba(93, 118, 181, 0.16)";
+      ctx.fillStyle = "#647391";
+      ctx.font = "12px 'Times New Roman', SimSun, serif";
+      for (let i = 0; i <= max; i++) {
+        const y = h - pad.b - (h - pad.t - pad.b) * (i / max);
+        ctx.beginPath();
+        ctx.moveTo(pad.l, y);
+        ctx.lineTo(w - pad.r, y);
+        ctx.stroke();
+        ctx.fillText(i, 12, y + 4);
+      }
+
+      rows.forEach((row, i) => {
+        const x = pad.l + i * gap + gap * 0.19;
+        const height = (h - pad.t - pad.b) * (row.count / max);
+        const y = h - pad.b - height;
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.beginPath();
+        ctx.roundRect(x, y, barW, height || 2, 8);
+        ctx.fill();
+        ctx.save();
+        ctx.translate(x + barW / 2, h - pad.b + 10);
+        ctx.rotate(-Math.PI / 4);
+        ctx.fillStyle = "#425371";
+        ctx.textAlign = "right";
+        ctx.font = "12px 'Times New Roman', SimSun, serif";
+        ctx.fillText(row.cn.slice(0, 7), 0, 0);
+        ctx.restore();
+      });
+    }
+
+    function drawDonut(canvas, rows) {
+      const { ctx, w, h } = setupCanvas(canvas);
+      const total = rows.reduce((sum, row) => sum + row.count, 0);
+      const cx = w / 2;
+      const cy = h / 2 - 6;
+      const r = Math.min(w, h) * 0.31;
+
+      if (!total) {
+        ctx.fillStyle = "#647391";
+        ctx.font = "18px 'Times New Roman', SimSun, serif";
+        ctx.textAlign = "center";
+        ctx.fillText("等待第一份测试结果", cx, cy);
+        return;
+      }
+
+      let start = -Math.PI / 2;
+      rows.forEach((row, i) => {
+        const angle = Math.PI * 2 * row.count / total;
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.arc(cx, cy, r, start, start + angle);
+        ctx.closePath();
+        ctx.fillStyle = colors[i % colors.length];
+        ctx.fill();
+        start += angle;
+      });
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, r * 0.58, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.94)";
+      ctx.fill();
+      ctx.fillStyle = "#17213a";
+      ctx.font = "700 32px 'Times New Roman', SimSun, serif";
+      ctx.textAlign = "center";
+      ctx.fillText(total, cx, cy - 4);
+      ctx.font = "14px 'Times New Roman', SimSun, serif";
+      ctx.fillStyle = "#647391";
+      ctx.fillText("总人数", cx, cy + 24);
+    }
+
+    window.addEventListener("resize", () => render(lastRecords));
+  </script>
+</body>
+</html>

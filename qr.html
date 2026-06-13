@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SFTI 测试二维码</title>
+  <style>
+    :root {
+      --text: #17213a;
+      --muted: #647391;
+      --line: rgba(93, 118, 181, 0.18);
+      --cyan: #00b8ff;
+      --mint: #20d9a4;
+      --pink: #ff4f9a;
+      --yellow: #ffd166;
+      --shadow: 0 24px 70px rgba(63, 84, 140, 0.16);
+      font-family: "Times New Roman", "SimSun", "Songti SC", serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 14% 10%, rgba(0, 184, 255, 0.24), transparent 27rem),
+        radial-gradient(circle at 86% 8%, rgba(255, 79, 154, 0.18), transparent 25rem),
+        radial-gradient(circle at 50% 88%, rgba(255, 209, 102, 0.22), transparent 34rem),
+        linear-gradient(135deg, #fff7fb 0%, #eefaff 45%, #fff7df 100%);
+    }
+
+    .card {
+      width: min(720px, calc(100% - 32px));
+      padding: 34px;
+      text-align: center;
+      border: 1px solid var(--line);
+      border-radius: 34px;
+      background: rgba(255, 255, 255, 0.82);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(14px);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(34px, 6vw, 64px);
+      letter-spacing: 0.04em;
+    }
+
+    p {
+      margin: 14px auto 24px;
+      max-width: 520px;
+      color: var(--muted);
+      line-height: 1.75;
+      font-size: 18px;
+    }
+
+    .qr {
+      display: inline-grid;
+      place-items: center;
+      padding: 18px;
+      border-radius: 28px;
+      background: #fff;
+      box-shadow: 0 16px 46px rgba(63, 84, 140, 0.12);
+    }
+
+    .qr img {
+      display: block;
+      width: min(420px, 76vw);
+      height: min(420px, 76vw);
+    }
+
+    .link {
+      display: block;
+      margin: 20px auto 0;
+      color: #2563eb;
+      word-break: break-all;
+    }
+
+    .actions {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 24px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 18px;
+      padding: 13px 18px;
+      color: #07111f;
+      font-weight: 900;
+      text-decoration: none;
+      background: linear-gradient(135deg, var(--cyan), var(--mint));
+      box-shadow: 0 16px 40px rgba(0, 184, 255, 0.18);
+    }
+
+    .btn.secondary {
+      background: linear-gradient(135deg, var(--yellow), var(--pink));
+    }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <h1>SFTI 测试二维码</h1>
+    <p>让用户用手机扫码，就会直接进入你们的无烟人格测试页面。</p>
+    <div class="qr">
+      <img
+        alt="SFTI 测试二维码"
+        src="https://api.qrserver.com/v1/create-qr-code/?size=800x800&margin=20&data=https%3A%2F%2Fxinxin-777.github.io%2FSFTI-web%2F"
+      />
+    </div>
+    <a class="link" href="https://xinxin-777.github.io/SFTI-web/">https://xinxin-777.github.io/SFTI-web/</a>
+    <div class="actions">
+      <a class="btn" href="https://xinxin-777.github.io/SFTI-web/">打开测试页</a>
+      <a
+        class="btn secondary"
+        download="SFTI-test-qr.png"
+        href="https://api.qrserver.com/v1/create-qr-code/?size=1200x1200&margin=20&data=https%3A%2F%2Fxinxin-777.github.io%2FSFTI-web%2F"
+      >下载二维码图片</a>
+    </div>
+  </main>
+</body>
+</html>

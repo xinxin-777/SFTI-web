@@ -434,10 +434,12 @@
       transition: transform 0.18s ease, border-color 0.18s ease, background 0.18s ease;
     }
 
-    .option:hover {
-      transform: translateY(-2px);
-      border-color: rgba(20, 217, 255, 0.6);
-      background: rgba(0, 184, 255, 0.1);
+    @media (hover: hover) and (pointer: fine) {
+      .option:hover {
+        transform: translateY(-2px);
+        border-color: rgba(20, 217, 255, 0.6);
+        background: rgba(0, 184, 255, 0.1);
+      }
     }
 
     .option.selected {
@@ -927,6 +929,46 @@
 
   <div class="toast" id="toast">请选择一个选项继续</div>
 
+  <script type="module">
+    import { firebaseConfig, firebaseReady } from "./firebase-config.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+    import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+    let db = null;
+
+    if (firebaseReady) {
+      const app = initializeApp(firebaseConfig);
+      db = getFirestore(app);
+    }
+
+    window.recordSftiResult = async function recordSftiResult(payload) {
+      if (!db) {
+        console.info("Firebase 尚未配置，结果不会上传统计。");
+        return;
+      }
+
+      if (localStorage.getItem("sfti_result_recorded") === "1") {
+        return;
+      }
+
+      const visitorId = localStorage.getItem("sfti_visitor_id") || crypto.randomUUID();
+      localStorage.setItem("sfti_visitor_id", visitorId);
+
+      try {
+        await addDoc(collection(db, "sfti_results"), {
+          ...payload,
+          visitorId,
+          pageUrl: location.href,
+          createdAt: serverTimestamp()
+        });
+
+        localStorage.setItem("sfti_result_recorded", "1");
+      } catch (error) {
+        console.warn("SFTI 统计上报失败：", error);
+      }
+    };
+  </script>
+
   <script>
     const factors = {
       S: { name: "神经调节", label: "S 提神续命", color: "#14d9ff", max: 10 },
@@ -1190,6 +1232,7 @@
 
       document.querySelectorAll(".option").forEach(btn => {
         btn.addEventListener("click", () => {
+          btn.blur();
           answers[current] = Number(btn.dataset.index);
           if (current < questions.length - 1) {
             current += 1;
@@ -1475,6 +1518,16 @@
 
       drawRadar($("radarCanvas"), scores);
       drawLine($("lineCanvas"), timeline);
+      window.recordSftiResult?.({
+        personaCn: persona.cn,
+        personaEn: persona.en,
+        level,
+        levelText: levelText(level),
+        maxFactor,
+        maxFactorLabel: maxFactor === "X" ? "潜伏型" : factors[maxFactor].label,
+        scores,
+        ftnd
+      });
       setTimeout(() => $("result").scrollIntoView({ behavior: "smooth", block: "start" }), 80);
     }
 

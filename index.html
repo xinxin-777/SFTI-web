@@ -940,15 +940,20 @@
   </script>
 
   <script src="https://static.cloudbase.net/cloudbase-js-sdk/2.8.1/cloudbase.full.js"></script>
-  <script src="./cloudbase-config.js"></script>
   <script>
-    const cloudbaseConfig = window.SFTI_CLOUDBASE_CONFIG;
+    const cloudbaseConfig = {
+      envId: "sfti-web-d6g05bimn2ed591c9",
+      collectionName: "sfti_results"
+    };
     let cloudbaseDb = null;
 
     async function initCloudbase() {
       if (cloudbaseDb) return cloudbaseDb;
-      if (!window.cloudbase || !cloudbaseConfig?.envId) {
-        throw new Error("CloudBase SDK 或环境 ID 未加载");
+      if (!window.cloudbase) {
+        throw new Error("CloudBase SDK 未加载，微信可能拦截了腾讯云脚本");
+      }
+      if (!cloudbaseConfig?.envId) {
+        throw new Error("CloudBase 环境 ID 未配置");
       }
 
       const app = cloudbase.init({ env: cloudbaseConfig.envId });

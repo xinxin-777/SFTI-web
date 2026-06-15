@@ -626,6 +626,39 @@
       margin-top: 22px;
     }
 
+    .copy-card {
+      margin-top: 22px;
+      padding: 22px;
+    }
+
+    .copy-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: stretch;
+      margin-top: 14px;
+    }
+
+    .copy-data {
+      width: 100%;
+      min-height: 92px;
+      resize: vertical;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 16px;
+      color: var(--text);
+      font: 700 15px/1.7 "Times New Roman", "SimSun", "Songti SC", serif;
+      background: rgba(255, 255, 255, 0.72);
+      outline: none;
+    }
+
+    .copy-help {
+      margin: 10px 0 0;
+      color: var(--muted);
+      line-height: 1.7;
+      font-size: 14px;
+    }
+
     .chart-card {
       padding: 22px;
     }
@@ -777,9 +810,14 @@
 
       .question-area,
       .diagnosis-card,
+      .copy-card,
       .loop-card,
       .chart-card {
         padding: 18px;
+      }
+
+      .copy-box {
+        grid-template-columns: 1fr;
       }
 
       canvas {
@@ -899,6 +937,18 @@
           </aside>
         </div>
 
+        <article class="panel copy-card">
+          <div class="chart-title">
+            <h3>复制我的测试数据</h3>
+            <span>匿名粘贴到收集表</span>
+          </div>
+          <div class="copy-box">
+            <textarea class="copy-data" id="copyData" readonly></textarea>
+            <button class="btn" id="copyResultBtn" type="button">一键复制结果数据</button>
+          </div>
+          <p class="copy-help">复制内容只包含人格类型、五个维度分数和依赖等级，不包含姓名、手机号、微信号等个人信息。</p>
+        </article>
+
         <div class="analysis-grid">
           <article class="panel chart-card">
             <div class="chart-title">
@@ -985,8 +1035,6 @@
         window.toast?.("统计上传成功");
       } catch (error) {
         console.warn("SFTI 统计上报失败：", error);
-        const message = error?.message || error?.errmsg || error?.code || "未知错误";
-        window.toast?.(`统计上传失败：${message}`);
       }
     };
   </script>
@@ -1524,6 +1572,16 @@
           <strong style="color:${factors[key].color}">${scores[key]}</strong>
         </div>
       `).join("");
+      $("copyData").value = [
+        `人格=${persona.cn}`,
+        `英文=${persona.en}`,
+        `S提神续命=${scores.S}`,
+        `R享乐奖赏=${scores.R}`,
+        `C人情应酬=${scores.C}`,
+        `A习惯动作=${scores.A}`,
+        `E情绪避难=${scores.E}`,
+        `依赖等级=${levelText(level)}`
+      ].join("；");
 
       $("radarInsight").innerHTML = `<strong>主导判断：</strong>${copy.main}<br>${copy.behavior}`;
       $("timelineInsight").innerHTML = `<strong>冲动预测：</strong>你的高风险波峰集中在 ${topTimes.map(t => `${t.time}（${timeLabels[t.time]}）`).join(" 与 ")}。这些时段建议提前放置替代动作，避免身体自动进入点烟流程。`;
@@ -1582,6 +1640,23 @@
       $("result").classList.remove("show");
       renderQuestion();
       toast("已重置测试");
+    });
+
+    $("copyResultBtn").addEventListener("click", async () => {
+      const text = $("copyData").value;
+      if (!text) {
+        toast("请先完成测试再复制");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(text);
+        toast("已复制，可粘贴到匿名收集表");
+      } catch (error) {
+        $("copyData").focus();
+        $("copyData").select();
+        toast("已选中文本，请手动复制");
+      }
     });
 
     window.addEventListener("resize", () => {

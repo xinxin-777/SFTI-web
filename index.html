@@ -1651,7 +1651,7 @@
 
       try {
         await navigator.clipboard.writeText(text);
-        toast("已复制，可粘贴到匿名收集表");
+        toast("复制成功");
       } catch (error) {
         $("copyData").focus();
         $("copyData").select();
